@@ -1,0 +1,4 @@
+.env
+data_cache.json
+notes.txt
+node_modules
