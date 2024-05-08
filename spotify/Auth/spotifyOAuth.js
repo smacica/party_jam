@@ -1,6 +1,7 @@
 const axios = require("axios");
 const fs = require("fs");
-const { setCacheParameter } = require("../../helper_functions/helpers");
+const { setCacheParameter } = require("@/helper_functions/helpers");
+const { Token } = require("@/db/init.js");
 
 const clientId = process.env.SPOTIFY_CLIENT_ID;
 const clientSecret = process.env.SPOTIFY_CLIENT_SECRET;
@@ -30,12 +31,19 @@ const refreshAccessToken = async (refreshToken) => {
         console.log(response.data);
 
         if (response.data.refresh_token) {
-            setCacheParameter(
-                ["access_token", "refresh_token"],
-                [response.data.access_token, response.data.refresh_token]
-            );
+            await Token.upsert({
+                type: "access_token",
+                value: response.data.access_token,
+            });
+            await Token.upsert({
+                type: "refresh_token",
+                value: response.data.refresh_token,
+            });
         } else {
-            setCacheParameter(["access_token"], [response.data.access_token]);
+            await Token.upsert({
+                type: "access_token",
+                value: response.data.access_token,
+            });
         }
 
         return response.data;
@@ -66,12 +74,19 @@ const getUserAccessToken = async (code) => {
             }
         );
         if (response.data.refresh_token) {
-            setCacheParameter(
-                ["access_token", "refresh_token"],
-                [response.data.access_token, response.data.refresh_token]
-            );
+            await Token.upsert({
+                type: "access_token",
+                value: response.data.access_token,
+            });
+            await Token.upsert({
+                type: "refresh_token",
+                value: response.data.refresh_token,
+            });
         } else {
-            setCacheParameter(["access_token"], [response.data.access_token]);
+            await Token.upsert({
+                type: "access_token",
+                value: response.data.access_token,
+            });
         }
 
         return response.data;
@@ -95,7 +110,10 @@ const getAccessToken = async () => {
                 },
             }
         );
-        setCacheParameter(["access_token"], [response.data.access_token]);
+        await Token.upsert({
+            type: "access_token",
+            value: response.data.access_token,
+        });
         return response.data;
     } catch (error) {
         throw error;

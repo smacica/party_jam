@@ -1,8 +1,11 @@
 require("dotenv").config();
 
 const axios = require("axios");
+const cors = require("cors");
+require("module-alias/register");
 
 const {
+    getTracks,
     getArtistData,
     getProfile,
 } = require("./spotify/spotify_utils/getFunctions");
@@ -13,6 +16,9 @@ const {
     refreshAccessToken,
     getUserAccessToken,
 } = require("./spotify/Auth/spotifyOAuth");
+const { access_token, refresh_token } = require("@/spotify/Auth/tokenCache");
+
+const { initializeDb, Token } = require("@/db/init");
 
 //express stuff
 const express = require("express");
@@ -24,7 +30,8 @@ const app = express();
 const redirect_uri = process.env.SPOTIFY_REDIRECT_URI;
 const clientId = process.env.SPOTIFY_CLIENT_ID;
 const clientSecret = process.env.SPOTIFY_CLIENT_SECRET;
-let access_token = "";
+
+app.use(cors());
 
 app.get("/", (req, res) => {
     const appleValue = req.query.apple;
@@ -36,7 +43,7 @@ app.get("/callback", async (req, res) => {
         let code = req.query.code || null;
         let state = req.query.state || null;
         const response = await getUserAccessToken(code);
-        access_token = response.access_token;
+        access_token = response.access_token.value;
         res.send("Authentificated");
     } catch (err) {
         console.log(err.message);
@@ -70,7 +77,7 @@ app.get("/login", function (req, res) {
 
 app.get("/profile", async (req, res) => {
     try {
-        const response = await getProfile(access_token);
+        const response = await getProfile(access_token.value);
 
         res.json(response);
     } catch (err) {
@@ -79,16 +86,32 @@ app.get("/profile", async (req, res) => {
     }
 });
 
+app.get("/search", async (req, res) => {
+    try {
+        const query = req.query.q;
+        const response = await getTracks(access_token.value, query);
+
+        res.json(response);
+    } catch (err) {
+        console.log(err);
+        res.send("fetching tracks falied");
+    }
+});
+
 app.listen(port, async () => {
     console.log(`Example app listening on port ${port}`);
-    let cache = require("./data_cache.json");
-    if (cache.refresh_token) {
+    await initializeDb();
+    const db_refresh_token = await Token.findByPk("refresh_token");
+    console.log("🔑: ", db_refresh_token);
+
+    if (db_refresh_token) {
         try {
-            const response = await refreshAccessToken(cache.refresh_token);
-            access_token = response.access_token;
+            refresh_token.update(db_refresh_token.value);
+            const response = await refreshAccessToken(refresh_token.value);
+            access_token.update(response.access_token);
             setInterval(async () => {
-                const response = await refreshAccessToken(cache.refresh_token);
-                access_token = response.access_token;
+                const response = await refreshAccessToken(refresh_token.value);
+                access_token.update(response.access_token);
                 console.log("refreshed token");
             }, 3000000);
         } catch (err) {

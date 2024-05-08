@@ -13,7 +13,7 @@ const getArtistData = async (accessToken) => {
         );
         return response.data;
     } catch (error) {
-        throw error;
+        throw new Error("functions getArtistData failed");
     }
 };
 
@@ -24,11 +24,28 @@ const getProfile = async (accessToken) => {
                 Authorization: `Bearer ${accessToken}`,
             },
         });
-        setCacheParameter(["user_id"], [response.data.id]);
+
         return response.data;
     } catch (err) {
-        throw err;
+        throw new err();
     }
 };
 
-module.exports = { getArtistData, getProfile };
+const getTracks = async (accessToken, query) => {
+    try {
+        const response = await axios.get("https://api.spotify.com/v1/search", {
+            params: {
+                q: "hello",
+                type: "track",
+            },
+            headers: {
+                Authorization: `Bearer ${accessToken}`,
+            },
+        });
+        return response.data;
+    } catch (err) {
+        throw new Error("functions fet Tracks failed");
+    }
+};
+
+module.exports = { getArtistData, getProfile, getTracks };
