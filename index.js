@@ -43,7 +43,7 @@ app.get("/callback", async (req, res) => {
         let code = req.query.code || null;
         let state = req.query.state || null;
         const response = await getUserAccessToken(code);
-        access_token = response.access_token.value;
+        access_token.update(response.access_token);
         res.send("Authentificated");
     } catch (err) {
         console.log(err.message);

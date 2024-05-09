@@ -27,7 +27,7 @@ const getProfile = async (accessToken) => {
 
         return response.data;
     } catch (err) {
-        throw new err();
+        throw err;
     }
 };
 
@@ -35,7 +35,7 @@ const getTracks = async (accessToken, query) => {
     try {
         const response = await axios.get("https://api.spotify.com/v1/search", {
             params: {
-                q: "hello",
+                q: "I like the way u kiss me",
                 type: "track",
             },
             headers: {
@@ -44,7 +44,7 @@ const getTracks = async (accessToken, query) => {
         });
         return response.data;
     } catch (err) {
-        throw new Error("functions fet Tracks failed");
+        throw err;
     }
 };
 

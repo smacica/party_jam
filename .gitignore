@@ -3,3 +3,4 @@ data_cache.json
 notes.txt
 node_modules
 main.db
+main.sqlite
