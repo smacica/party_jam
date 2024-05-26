@@ -35,8 +35,9 @@ const getTracks = async (accessToken, query) => {
     try {
         const response = await axios.get("https://api.spotify.com/v1/search", {
             params: {
-                q: "I like the way u kiss me",
+                q: query,
                 type: "track",
+                limit: 20,
             },
             headers: {
                 Authorization: `Bearer ${accessToken}`,
@@ -48,4 +49,8 @@ const getTracks = async (accessToken, query) => {
     }
 };
 
-module.exports = { getArtistData, getProfile, getTracks };
+module.exports = {
+    getArtistData,
+    getProfile,
+    getTracks,
+};

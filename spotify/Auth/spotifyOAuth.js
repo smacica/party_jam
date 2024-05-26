@@ -28,7 +28,6 @@ const refreshAccessToken = async (refreshToken) => {
                 json: true,
             }
         );
-        console.log(response.data);
 
         if (response.data.refresh_token) {
             await Token.upsert({
