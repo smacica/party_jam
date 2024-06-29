@@ -43,9 +43,6 @@ router.get("/app/login", function (req, res) {
         "user-read-recently-played",
         "playlist-modify-public",
         "playlist-modify-private",
-        "user-read-currently-playing",
-        "user-read-playback-state",
-        "user-modify-playback-state",
     ].join(" ");
 
     res.redirect(
@@ -70,34 +67,3 @@ router.get("/app/profile", async (req, res) => {
         res.status(500).send({ error: "fetching profile falied" });
     }
 });
-router.get("/app/playback", async (req, res) => {
-    try {
-        const response = "playback";
-        res.json({ payload: response });
-    } catch (err) {
-        console.log(err);
-        res.status(500).send({ error: "fetching profile falied" });
-    }
-});
-
-router.get("/app/qeue", async (req, res) => {
-    try {
-        const response = "qeue";
-        res.json({ payload: response });
-    } catch (err) {
-        console.log(err);
-        res.status(500).send({ error: "fetching profile falied" });
-    }
-});
-
-router.get("/app/add", async (req, res) => {
-    try {
-        const response = "add";
-        res.json({ payload: response });
-    } catch (err) {
-        console.log(err);
-        res.status(500).send({ error: "fetching profile falied" });
-    }
-});
-
-module.exports = router;

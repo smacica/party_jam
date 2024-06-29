@@ -1,13 +1,14 @@
 const axios = require("axios");
 const { setCacheParameter } = require("../../helper_functions/helpers");
+const { access_token, refresh_token } = require("@/spotify/Auth/tokenCache");
 
-const getArtistData = async (accessToken) => {
+const getArtistData = async () => {
     try {
         const response = await axios.get(
             `https://api.spotify.com/v1/artists/${process.env.ARTHEMAS_ID}`,
             {
                 headers: {
-                    Authorization: `Bearer ${accessToken}`,
+                    Authorization: `Bearer ${access_token.value}`,
                 },
             }
         );
@@ -17,21 +18,21 @@ const getArtistData = async (accessToken) => {
     }
 };
 
-const getProfile = async (accessToken) => {
+const getProfile = async () => {
     try {
         const response = await axios.get("https://api.spotify.com/v1/me", {
             headers: {
-                Authorization: `Bearer ${accessToken}`,
+                Authorization: `Bearer ${access_token.value}`,
             },
         });
 
         return response.data;
     } catch (err) {
-        throw err;
+        throw new Error("Failed fetching Profile");
     }
 };
 
-const getTracks = async (accessToken, query) => {
+const getTracks = async (query) => {
     try {
         const response = await axios.get("https://api.spotify.com/v1/search", {
             params: {
@@ -40,12 +41,12 @@ const getTracks = async (accessToken, query) => {
                 limit: 20,
             },
             headers: {
-                Authorization: `Bearer ${accessToken}`,
+                Authorization: `Bearer ${access_token.value}`,
             },
         });
         return response.data;
     } catch (err) {
-        throw err;
+        throw new Error("Failed getting Tracks");
     }
 };
 
