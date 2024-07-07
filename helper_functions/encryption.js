@@ -1,4 +1,3 @@
-require("dotenv").config();
 const crypto = require("crypto");
 const algorithm = "aes-256-cbc";
 
@@ -28,9 +27,9 @@ function decrypt(text) {
     return decrypted.toString();
 }
 
-const etwas = encrypt("hello world");
-console.log(etwas);
-const etwas2 = encrypt("hello wud");
-console.log(etwas2);
-console.log(decrypt(etwas));
-console.log(decrypt(etwas2));
+module.exports = { encrypt, decrypt };
+
+// {
+//     iv: 'd12cb9d0bdad5b8aa88bcdd04ea63bba',
+//     encryptedData: 'a28a0292125c05b3e3a7d1c1129bff51'
+//   }

@@ -29,7 +29,7 @@ const add = async (uri, playlist_id) => {
     }
 };
 
-const addItems = async (uris, playlist_id) => {
+const addItemsSpotify = async (uris, playlist_id) => {
     try {
         const division = Math.floor(uris.length / 100);
         let uris_chunks = [];
@@ -64,7 +64,7 @@ const addItems = async (uris, playlist_id) => {
     }
 };
 
-const removeItems = async (uris, playlist_id) => {
+const removeItemsSpotify = async (uris, playlist_id) => {
     try {
         const division = Math.floor(uris.length / 100);
         let uris_chunks = [];
@@ -107,7 +107,7 @@ const removeItems = async (uris, playlist_id) => {
     }
 };
 
-const getItems = async (playlist_id) => {
+const getItemsSpotify = async (playlist_id) => {
     try {
         const limit = 50;
         const response = await axios.get(
@@ -245,11 +245,11 @@ const create = async (request) => {
 };
 
 module.exports = {
-    getItems,
+    getItemsSpotify,
     remove,
     add,
     getPlaylist,
     create,
-    addItems,
-    removeItems,
+    addItemsSpotify,
+    removeItemsSpotify,
 };

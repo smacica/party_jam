@@ -34,7 +34,7 @@ router.get("/app/playback", async (req, res) => {
 
 router.get("/qeue", async (req, res) => {
     try {
-        const response = await player.getQeue();
+        const response = await player.getQeueSpotify();
         res.json({ payload: response });
     } catch (err) {
         console.log(err);
@@ -42,9 +42,19 @@ router.get("/qeue", async (req, res) => {
     }
 });
 
-router.get("/app/add", async (req, res) => {
+router.post("/qeue/add", async (req, res) => {
     try {
-        const response = "add";
+        const response = await player.addQeueSpotify(req);
+        res.json({ payload: response });
+    } catch (err) {
+        console.log(err);
+        res.status(500).send({ error: "fetching profile falied" });
+    }
+});
+
+router.get("/pause", async (req, res) => {
+    try {
+        const response = await player.pauseSpotify(req);
         res.json({ payload: response });
     } catch (err) {
         console.log(err);

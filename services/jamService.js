@@ -35,7 +35,6 @@ const create = async (request) => {
                     },
                 }
             );
-
             //get tracks from playlist id
             //save them to the jam_tracks in table
 
@@ -55,7 +54,7 @@ const create = async (request) => {
             raw: true,
         });
 
-        await playlistService.removeItems(
+        await playlistService.removeItemsSpotify(
             tracks_to_delete.map((item) => item.uri),
             jam_playlist.id
         );
@@ -66,14 +65,22 @@ const create = async (request) => {
             },
         });
 
-        const playlist_tracks = await playlistService.getItems(
+        const playlist_tracks = await playlistService.getItemsSpotify(
             request.body.playlist_id
         );
 
-        await playlistService.addItems(
+        await playlistService.addItemsSpotify(
             playlist_tracks.map((item) => item.track.uri),
             jam_playlist.id
         );
+        // const length_of_playlist = playlist_tracks.length;
+        // await playlistService.addItemsSpotify(
+        //     [
+        //         playlist_tracks[getRandomInt(length_of_playlist)].track.uri,
+        //         playlist_tracks[getRandomInt(length_of_playlist)].track.uri,
+        //     ],
+        //     jam_playlist.id
+        // );
 
         await JamTrack.bulkCreate(
             playlist_tracks.map((item) => {
@@ -91,5 +98,7 @@ const create = async (request) => {
         throw new Error("Failed saving source playlist");
     }
 };
+
+const createJam = async (req) => {};
 
 module.exports = { create };

@@ -16,6 +16,7 @@ const userAuth = require("@/routes/Auth");
 const player = require("@/routes/player");
 const errorHandler = require("@/middleware/errorHandler");
 const jamPlaylist = require("@/routes/jamPlaylist");
+const spotifyAuth = require("@/routes/spotifyAuth");
 
 //express stuff
 const express = require("express");
@@ -39,6 +40,7 @@ app.use("/track", track);
 app.use("/", userAuth);
 app.use("/jam", jamPlaylist);
 app.use("/", player);
+app.use("/spotify", spotifyAuth);
 
 app.get("/", (req, res) => {
     const appleValue = req.query.apple;

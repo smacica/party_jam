@@ -22,6 +22,38 @@ const Token = sequelize.define(
     }
 );
 
+const AccessToken = sequelize.define(
+    "AccessToken",
+    {
+        iv: {
+            type: DataTypes.STRING,
+            primaryKey: true,
+        },
+        encryptedData: {
+            type: DataTypes.STRING,
+        },
+    },
+    {
+        tableName: "access_tokens",
+    }
+);
+
+const RefreshToken = sequelize.define(
+    "RefreshToken",
+    {
+        iv: {
+            type: DataTypes.STRING,
+            primaryKey: true,
+        },
+        encryptedData: {
+            type: DataTypes.STRING,
+        },
+    },
+    {
+        tableName: "refresh_tokens",
+    }
+);
+
 const User = sequelize.define(
     "User",
     {
@@ -45,7 +77,7 @@ const User = sequelize.define(
         },
         password: {
             type: DataTypes.STRING,
-            allowNull: false,
+            allowNull: true,
         },
         isActive: {
             type: DataTypes.BOOLEAN,
@@ -222,8 +254,41 @@ const JamTrack = sequelize.define(
     }
 );
 
+const Jam = sequelize.define(
+    "Jam",
+    {
+        id: {
+            type: DataTypes.STRING,
+            allowNull: false,
+            primaryKey: true,
+            unique: true,
+        },
+        name: {
+            type: DataTypes.STRING,
+        },
+        max_people: {
+            type: DataTypes.INTEGER,
+        },
+        password: {
+            type: DataTypes.STRING,
+            allowNull: true,
+        },
+        type: {
+            type: DataTypes.STRING,
+            allowNull: true,
+        },
+    },
+    {
+        tableName: "jams",
+        timestamps: true, // Adds createdAt and updatedAt fields
+    }
+);
+
 User.hasMany(Playlist, { foreignKey: "user_id" });
 User.hasMany(JamPlaylist, { foreignKey: "user_id" });
+User.hasOne(AccessToken, { foreignKey: "user_id" });
+User.hasOne(RefreshToken, { foreignKey: "user_id" });
+User.hasOne(Jam, { foreignKey: "user_id" });
 JamPlaylist.hasMany(JamTrack, { foreignKey: "jam_playlist_id" });
 
 const initializeDb = async () => {
@@ -244,4 +309,13 @@ const initializeDb = async () => {
         });
 */
 
-module.exports = { initializeDb, Token, User, Playlist, JamPlaylist, JamTrack };
+module.exports = {
+    initializeDb,
+    Token,
+    User,
+    Playlist,
+    JamPlaylist,
+    JamTrack,
+    AccessToken,
+    RefreshToken,
+};

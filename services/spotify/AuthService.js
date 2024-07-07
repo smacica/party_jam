@@ -1,13 +1,16 @@
 const axios = require("axios");
 const fs = require("fs");
 const { setCacheParameter } = require("@/helper_functions/helpers");
+const { encrypt, decrypt } = require("@/helper_functions/encryption");
+
 const { Token } = require("@/db/init.js");
+const { AccessToken, RefreshToken } = require("@/db/init.js");
 
 const clientId = process.env.SPOTIFY_CLIENT_ID;
 const clientSecret = process.env.SPOTIFY_CLIENT_SECRET;
 const redirect_uri = process.env.SPOTIFY_REDIRECT_URI;
 
-const refreshAccessToken = async (refreshToken) => {
+const refreshSpotifyToken = async (refreshToken, user_id) => {
     try {
         const response = await axios.post(
             "https://accounts.spotify.com/api/token",
@@ -28,30 +31,23 @@ const refreshAccessToken = async (refreshToken) => {
                 json: true,
             }
         );
-
+        await AccessToken.create({
+            ...encrypt(response.data.access_token),
+            user_id: user_id,
+        });
         if (response.data.refresh_token) {
-            await Token.upsert({
-                type: "access_token",
-                value: response.data.access_token,
-            });
-            await Token.upsert({
-                type: "refresh_token",
-                value: response.data.refresh_token,
-            });
-        } else {
-            await Token.upsert({
-                type: "access_token",
-                value: response.data.access_token,
+            await RefreshToken.create({
+                ...encrypt(response.data.refresh_token),
+                user_id: user_id,
             });
         }
-
         return response.data;
     } catch (error) {
         throw error;
     }
 };
 
-const getUserAccessToken = async (code) => {
+const getUserAccessToken = async (code, user_id) => {
     try {
         const response = await axios.post(
             "https://accounts.spotify.com/api/token",
@@ -72,22 +68,27 @@ const getUserAccessToken = async (code) => {
                 json: true,
             }
         );
+
+        await AccessToken.destroy({
+            where: {
+                user_id: user_id,
+            },
+        });
+        await RefreshToken.destroy({
+            where: {
+                user_id: user_id,
+            },
+        });
+        await AccessToken.create({
+            ...encrypt(response.data.access_token),
+            user_id: user_id,
+        });
         if (response.data.refresh_token) {
-            await Token.upsert({
-                type: "access_token",
-                value: response.data.access_token,
-            });
-            await Token.upsert({
-                type: "refresh_token",
-                value: response.data.refresh_token,
-            });
-        } else {
-            await Token.upsert({
-                type: "access_token",
-                value: response.data.access_token,
+            await RefreshToken.create({
+                ...encrypt(response.data.refresh_token),
+                user_id: user_id,
             });
         }
-
         return response.data;
     } catch (err) {
         throw err;
@@ -162,4 +163,6 @@ const getAccessToken = async () => {
     }
 };
 
-module.exports = { refreshAccessToken, getAccessToken, getUserAccessToken };
+module.exports = {
+    getUserAccessToken,
+};

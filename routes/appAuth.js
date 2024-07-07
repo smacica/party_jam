@@ -46,6 +46,9 @@ router.get("/app/login", function (req, res) {
         "user-read-currently-playing",
         "user-read-playback-state",
         "user-modify-playback-state",
+
+        "app-remote-control",
+        "streaming",
     ].join(" ");
 
     res.redirect(

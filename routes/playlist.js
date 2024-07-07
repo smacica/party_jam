@@ -19,7 +19,7 @@ router.post("/add", async (req, res, next) => {
 });
 router.get("/items", async (req, res, next) => {
     try {
-        const response = await playlistService.getItems(
+        const response = await playlistService.getItemsSpotify(
             process.env.TESTING_PLAYLIST_ID
         );
         res.send({ payload: response });
