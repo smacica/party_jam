@@ -15,6 +15,7 @@ router.post("/register", async (req, res) => {
         await User.create({ email, username, password: hashedPassword });
         res.json({ message: "User registered successfully" });
     } catch (error) {
+        console.log(error);
         res.status(500).json({ error: "Registration failed" });
     }
 });

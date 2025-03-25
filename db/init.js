@@ -235,6 +235,39 @@ const JamPlaylist = sequelize.define(
     }
 );
 
+const JamUser = sequelize.define(
+    "JamUser",
+    {
+        id: {
+            type: DataTypes.UUID,
+            defaultValue: DataTypes.UUIDV4,
+            primaryKey: true,
+        },
+        nickname: {
+            type: DataTypes.STRING,
+            unique: true,
+            allowNull: false,
+        },
+        active: {
+            type: DataTypes.BOOLEAN,
+            defaultValue: false,
+        },
+        voted: {
+            type: DataTypes.BOOLEAN,
+            defaultValue: false,
+        },
+        role: {
+            type: DataTypes.STRING,
+            allowNull: false,
+            defaultValue: "voter",
+        },
+    },
+    {
+        tableName: "jam_users",
+        timestamps: true, // Adds createdAt and updatedAt fields
+    }
+);
+
 const JamTrack = sequelize.define(
     "JamTrack",
     {
@@ -258,16 +291,18 @@ const Jam = sequelize.define(
     "Jam",
     {
         id: {
-            type: DataTypes.STRING,
             allowNull: false,
             primaryKey: true,
             unique: true,
+            type: DataTypes.UUID,
+            defaultValue: DataTypes.UUIDV4,
         },
         name: {
             type: DataTypes.STRING,
         },
         max_people: {
             type: DataTypes.INTEGER,
+            allowNull: true,
         },
         password: {
             type: DataTypes.STRING,
@@ -276,6 +311,7 @@ const Jam = sequelize.define(
         type: {
             type: DataTypes.STRING,
             allowNull: true,
+            defaultValue: "vote",
         },
     },
     {
@@ -290,6 +326,7 @@ User.hasOne(AccessToken, { foreignKey: "user_id" });
 User.hasOne(RefreshToken, { foreignKey: "user_id" });
 User.hasOne(Jam, { foreignKey: "user_id" });
 JamPlaylist.hasMany(JamTrack, { foreignKey: "jam_playlist_id" });
+Jam.hasMany(JamUser, { foreignKey: "jam_id" });
 
 const initializeDb = async () => {
     try {
@@ -318,4 +355,5 @@ module.exports = {
     JamTrack,
     AccessToken,
     RefreshToken,
+    Jam,
 };

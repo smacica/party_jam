@@ -16,7 +16,7 @@ const {
     getProfile,
 } = require("@/spotify/spotify_utils/getFunctions");
 //env imports
-const redirect_uri = process.env.SPOTIFY_REDIRECT_URI;
+const redirect_uri = process.env.SPOTIFY_APP_REDIRECT_URI;
 const clientId = process.env.SPOTIFY_CLIENT_ID;
 const clientSecret = process.env.SPOTIFY_CLIENT_SECRET;
 
@@ -28,7 +28,7 @@ router.get("/callback", async (req, res) => {
         access_token.update(response.access_token);
         res.send({ message: "Authentificated" });
     } catch (err) {
-        console.log(err.message);
+        console.log(err);
         res.status(500).send({ message: "Auth Failed" });
     }
 });
@@ -73,34 +73,4 @@ router.get("/app/profile", async (req, res) => {
         res.status(500).send({ error: "fetching profile falied" });
     }
 });
-router.get("/app/playback", async (req, res) => {
-    try {
-        const response = "playback";
-        res.json({ payload: response });
-    } catch (err) {
-        console.log(err);
-        res.status(500).send({ error: "fetching profile falied" });
-    }
-});
-
-router.get("/app/qeue", async (req, res) => {
-    try {
-        const response = "qeue";
-        res.json({ payload: response });
-    } catch (err) {
-        console.log(err);
-        res.status(500).send({ error: "fetching profile falied" });
-    }
-});
-
-router.get("/app/add", async (req, res) => {
-    try {
-        const response = "add";
-        res.json({ payload: response });
-    } catch (err) {
-        console.log(err);
-        res.status(500).send({ error: "fetching profile falied" });
-    }
-});
-
 module.exports = router;

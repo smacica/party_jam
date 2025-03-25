@@ -9,14 +9,19 @@ const { initializeDb, Token } = require("@/db/init");
 const cookieParser = require("cookie-parser");
 
 //routes
-const appAuth = require("@/routes/appAuth");
-const playlist = require("@/routes/playlist");
-const track = require("@/routes/track");
+const appAuth = require("@/routes/AppSpotifyAuth");
+const playlist = require("@/routes/Playlist");
+const track = require("@/routes/SearchTrack");
 const userAuth = require("@/routes/Auth");
-const player = require("@/routes/player");
+const player = require("@/routes/Player");
 const errorHandler = require("@/middleware/errorHandler");
-const jamPlaylist = require("@/routes/jamPlaylist");
-const spotifyAuth = require("@/routes/spotifyAuth");
+const jam = require("@/routes/Jam");
+const spotifyAuth = require("@/routes/UserSpotifyAuth");
+const { createServer } = require("http");
+const { Server } = require("socket.io");
+
+const connectSockets = require('@/sockets/socket_connect')
+var cookie = require("cookie");
 
 //express stuff
 const express = require("express");
@@ -38,7 +43,7 @@ app.use("/", appAuth);
 app.use("/playlist", playlist);
 app.use("/track", track);
 app.use("/", userAuth);
-app.use("/jam", jamPlaylist);
+app.use("/jam", jam);
 app.use("/", player);
 app.use("/spotify", spotifyAuth);
 
@@ -49,7 +54,26 @@ app.get("/", (req, res) => {
 
 app.use(errorHandler);
 
-app.listen(port, "0.0.0.0", async () => {
+const httpServer = createServer(app);
+const io = new Server(httpServer, {
+    cors: {
+        origin: process.env.FRONTEND_URL,
+        credentials: true,
+        allowedHeaders: ["token", "jam_token"],
+    },
+});
+
+connectSockets(httpServer)
+
+// io.on("connection", (socket) => {
+//     const auth_token = cookie.parse(socket.handshake.headers.cookie).token;
+//     console.log("🙂", auth_token);
+//     socket.emit("init", "You have connected to the party jam server!");
+//     socket.on("join_room", (room_id) => {});
+//     socket.on("get_data", () => {});
+// });
+
+httpServer.listen(port, "0.0.0.0", async () => {
     console.log(`Example app listening on port ${port}`);
     await initializeDb();
     const db_refresh_token = await Token.findByPk("refresh_token");
