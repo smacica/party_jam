@@ -24,7 +24,6 @@ Standard Spotify group sessions require every single participant to have a Spoti
 
 * **Backend:** Node.js, Express
 * **Database:** SQLite
-* **Frontend:** HTML5, Tailwind CSS, Vanilla JavaScript
 
 ---
 
@@ -39,7 +38,7 @@ Standard Spotify group sessions require every single participant to have a Spoti
 
 1.  **Clone the repository:**
     ```bash
-    git clone [https://github.com/yourusername/partyjam.git](https://github.com/yourusername/partyjam.git) 
+    git clone https://github.com/yourusername/partyjam.git](https://github.com/yourusername/partyjam.git)
     cd partyjam
     ```
 
